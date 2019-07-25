@@ -46,16 +46,20 @@ var starGame;
 var countStart = 20;
 var timer;
 var questionIndex;
+var correctCount;
+var incorrectCount;
+var correctOption;
+var funFact;
 
 $(".startGame").on("click", function () {  
-    $("#runningTime").append("<h2>Time Remaining: <span id='countTime'>20</span></h2>");
+    $("#startArea").html("<h2>Time Remaining: <span id='countTime'></span></h2>");
     quizDisplay ();
 })
 
 function countTime() {
     $("#countTime").text(countStart);
     countStart--;
-    if (countStart === 0) {
+    if (countStart === -1) {
         timeUp ();
     }
 }
@@ -66,19 +70,55 @@ function quizDisplay() {
     console.log(myQuestions[questionIndex]);
 
     $("#questionDisplay").append($("<h3>").text(myQuestions[questionIndex].question));
+    correctOption = myQuestions[questionIndex].correctAns;
+    funFact = myQuestions[questionIndex].funFacts;
 
-    // specify index (i)
-    $.each(myQuestions[questionIndex].ansOptions, function (i){
-        var radioBtn = $("<button>").addClass("btn").attr("type","button").text(myQuestions[questionIndex].ansOptions[i]);
-        $("#questionDisplay").append(radioBtn);
+    $.each(myQuestions[questionIndex].ansOptions, function (){
+        // this = ansOptions[i]
+        var divAns = $("<div>").addClass("ansChoice").attr({
+            "data_ans" : this,
+            "data_correct" : correctOption,
+        })
+        $("#questionDisplay").append(divAns);
+        divAns.append($("<h5>").text(this));
+
+        $(".ansChoice").on("click", function (){
+            clearInterval(timer);
+            var ansValue = $(this).attr("data_ans");
+            if (ansValue === correctOption) {
+                //correctChoice();
+                console.log("yes")
+                correctDisplay ();
+            } else {
+                console.log("motherfucker");
+            }
+        })
 
     })
+}
+
+function correctDisplay(){
+    correctCount++;
+    var divCorrect = $("<p>").text(funFact);
+    $("#questionDisplay").html("<h3>You are correct!!</h3>");
+    $("#questionDisplay").append(divCorrect);
+    if (questionIndex < myQuestions.length - 1) {
+        setTimeout(nextQuestion, 2000);
+    }
+    
+}
+
+function nextQuestion() {
+    questionIndex++;
+    countTime();
+    quizDisplay();
+    
 }
 
 function timeUp() {
     clearInterval(timer);
     $("#resultDisplay").text("Time Up !!!")
-    ansDisplay(); //clearInterval(myVar)
+    //ansDisplay(); //clearInterval(myVar)
 }
 
 
