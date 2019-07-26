@@ -1,129 +1,175 @@
 $(function (){
 
 var myQuestions = [{
-    question: "Which character can be seen drinking a beer in every episode?",
-    ansOptions: ["Erlich", "Gilfoyle", "Dinesh", "Jian Yang"],
+    ask: "Which character can be seen drinking a beer in every episode?",
+    ansChoices: ["Erlich", "Gilfoyle", "Dinesh", "Jian Yang"],
     correctAns: "Gilfoyle",
-    funFacts: "",
-}, {
-    question: "What kind of implant does Russ Hanneman have?",
-    ansOptions: ["Cheek", "Chin", "Calf", "Bicep"],
+    funFacts: "later",
+    }, {
+    ask: "What kind of implant does Russ Hanneman have?",
+    ansChoices: ["Cheek", "Chin", "Calf", "Bicep"],
     correctAns: "Calf",
-}, {
-    question: "What type of pet is illegal in California?",
-    ansOptions: ["Turtle", "Rabbit", "Pig", "Ferret"],
+    funFacts: "later",
+    }, {
+    ask: "What type of pet is illegal in California?",
+    ansChoices: ["Turtle", "Rabbit", "Pig", "Ferret"],
     correctAns: "Ferret",
     funFacts: "It's against California Fish and Game Code 2116-2126 to own ferrets. Erlich's neighbor, Noah, kept a large number of ferret in his backyard. Richard and Erlich used the illegality of this to blackmail Noah into not reporting their zoning violations.",
-}, {
-    question: "Which religion did Gilfoyle subscribe to?",
-    ansOptions: ["Buddhism", "Christian", "Scientology", "Satanism"],
+    }, {
+    ask: "Which religion did Gilfoyle subscribe to?",
+    ansChoices: ["Buddhism", "Christian", "Scientology", "Satanism"],
     correctAns: "Satanism",
-    funFacts: "Gilfoyle is a self-proclaimed 'LaVeyan Satanist with theistic tendencies'. Gilfoyle and his girlfriend, Tara, took Dinesh and Erlich to a Satanic baptism in season 1",
-}, {
-    question: "What language does Jared speak in his sleep?",
-    ansOptions: ["Vietnamese", "French", "German", "Russian"],
+    funFacts: "Gilfoyle is a self-proclaimed 'LaVeyan Satanist with theistic tendencies'. Gilfoyle and his girlfriend, Tara, took Dinesh and Erlich to a Satanic baptism in season 1.",
+    }, {
+    ask: "What language does Jared speak in his sleep?",
+    ansChoices: ["Vietnamese", "French", "German", "Russian"],
     correctAns: "German",
-}, {
-    question: "Which cast member is actually majored in Computer Science?",
-    ansOptions: ["Thomas Middleditch", "Martin Starr", "Kumail Nanjiani", "Zach Woods"],
+    funFacts: "later",
+    }, {
+    ask: "Which cast member is actually majored in Computer Science?",
+    ansChoices: ["Thomas Middleditch", "Martin Starr", "Kumail Nanjiani", "Zach Woods"],
     correctAns: "Kumail Nanjiani",
-    funFacts: "He completed a double major in computer science and philosophy",
-}, {
-    question: "Mathematicans at this university were hired to ensure the show's theories are based in reality",
-    ansOptions: ["Harvard", "UC Berkeley", "Stanford", "MIT"],
+    funFacts: "He completed a double major in computer science and philosophy.",
+    }, {
+    ask: "Mathematicans at this university were hired to ensure the show's theories are based in reality?",
+    ansChoices: ["Harvard", "UC Berkeley", "Stanford", "MIT"],
     correctAns: "Stanford",
     funFacts: "The actual math behind the epic dick joke in Season 1: Mike Judge, enlisted some honest-to-God mathematicians at Stanford University to figure out the max 'mean jerk rate,' as well as other functions related to 'shaft ratios: and 'receptiveness to the presenter.'",
-}, {
-    question: "Which middle-out compression company tricked Pied Piper into revealing their algorithms?",
-    ansOptions: ["Google", "Hooli", "Endframe", "Yahoo"],
+    }, {
+    ask: "Which middle-out compression company tricked Pied Piper into revealing their algorithms?",
+    ansChoices: ["Google", "Hooli", "Endframe", "Yahoo"],
     correctAns: "Endframe",
-    funFacts: "The fiction company End Frame has its own website. According to the website, the company's CEO, Marc Wallace, founded End Frame from his now ex-father-in-law garage",
-}
+    funFacts: "The fiction company End Frame has its own website. According to the website, the company's CEO, Marc Wallace, founded End Frame from his now ex-father-in-law garage.",
+    }
 ];
 
-
-var starGame;
-var countStart = 20;
+var countStart;
 var timer;
-var questionIndex;
-var correctCount;
-var incorrectCount;
+
+var questionIndex = 0;
+var displayQuestion;
 var correctOption;
 var funFact;
 
+var correctCount;
+var incorrectCount;
+var timeupCount;
+
 $(".startGame").on("click", function () {  
-    $("#startArea").html("<h2>Time Remaining: <span id='countTime'></span></h2>");
-    quizDisplay ();
+   startGame();
 })
 
+function startGame() { //empty all content and reset values
+    $(".startGame").hide();
+    $("#triviaDisplay").empty();
+
+    correctCount = 0;
+    incorrectCount = 0;
+    timeupCount = 0;
+    countStart = 20;
+    
+    quizDisplay();
+}
+
 function countTime() {
-    $("#countTime").text(countStart);
+    $(".runningTime").html("<h2>Time Remaining :" + " " + countStart + "</h2>");
     countStart--;
     if (countStart === -1) {
-        timeUp ();
+        timeUp();
     }
 }
 
 function quizDisplay() {
+    countStart = 20;
     timer = setInterval(countTime, 1000); //myVar = setInterval(js function, 1000)
-    questionIndex = 0;
-    console.log(myQuestions[questionIndex]);
 
-    $("#questionDisplay").append($("<h3>").text(myQuestions[questionIndex].question));
     correctOption = myQuestions[questionIndex].correctAns;
     funFact = myQuestions[questionIndex].funFacts;
+    displayQuestion = myQuestions[questionIndex].ask;
+    console.log(questionIndex);
 
-    $.each(myQuestions[questionIndex].ansOptions, function (){
-        // this = ansOptions[i]
-        var divAns = $("<div>").addClass("ansChoice").attr({
-            "data_ans" : this,
-            "data_correct" : correctOption,
-        })
-        $("#questionDisplay").append(divAns);
+    //Display question on html
+    $("#triviaDisplay").html("<h3>" + displayQuestion + "</h3>");
+
+    //Display multiple choices 
+    $.each(myQuestions[questionIndex].ansChoices, function (){
+        //this = ansChoices[i]
+        var divAns = $("<div>").addClass("ansChoice").attr("data_ans",this)
+        $("#triviaDisplay").append(divAns);
         divAns.append($("<h5>").text(this));
-
-        $(".ansChoice").on("click", function (){
-            clearInterval(timer);
-            var ansValue = $(this).attr("data_ans");
-            if (ansValue === correctOption) {
-                //correctChoice();
-                console.log("yes")
-                correctDisplay ();
-            } else {
-                console.log("motherfucker");
-            }
-        })
-
+    })
+    //User pick a choice
+    $(".ansChoice").on("click", function (){
+        clearInterval(timer);
+        var ansValue = $(this).attr("data_ans");
+        if (ansValue === correctOption) {
+            correctDisplay();
+        } else {
+            incorrectDisplay();
+        }
     })
 }
 
 function correctDisplay(){
+    clearInterval(timer);
     correctCount++;
-    var divCorrect = $("<p>").text(funFact);
-    $("#questionDisplay").html("<h3>You are correct!!</h3>");
-    $("#questionDisplay").append(divCorrect);
+
+    $(".runningTime").html("<h3>You are correct!!</h3>");
+    $("#triviaDisplay").html("<p>" + funFact + "</p>");
+
     if (questionIndex < myQuestions.length - 1) {
-        setTimeout(nextQuestion, 2000);
-    }
-    
+        setTimeout(nextQuestion, 3000);
+    } else {
+        setTimeout(gameResult, 3000);
+    } 
 }
 
-function nextQuestion() {
-    questionIndex++;
-    countTime();
-    quizDisplay();
-    
+function incorrectDisplay(){
+    clearInterval(timer);
+    incorrectCount++;
+
+    $(".runningTime").html("<h3>Nah....</h3>");
+    $(".runningTime").append("<h4>The correct answer is: " + correctOption + "</h4>");
+    $("#triviaDisplay").html("<p>" + funFact + "</p>");
+
+    if (questionIndex < myQuestions.length -1) {
+        setTimeout(nextQuestion, 3000);
+    } else {
+        setTimeout(gameResult, 3000);
+    }
 }
 
 function timeUp() {
     clearInterval(timer);
+    timeupCount++;
+
     $("#resultDisplay").text("Time Up !!!")
-    //ansDisplay(); //clearInterval(myVar)
+    $(".runningTime").append("<h4>The correct answer is: " + correctOption + "</h4>");
+    $("#triviaDisplay").html("<p>" + funFact + "</p>");
+
+    if (questionIndex < myQuestions.length -1) {
+        setTimeout(nextQuestion, 3000);
+    } else {
+        setTimeout(gameResult, 3000);
+    }
+}
+function nextQuestion() {
+    clearInterval(timer);
+    questionIndex++;
+    quizDisplay();
 }
 
+function gameResult (){ //end game
+    clearInterval(timer);
+    $(".runningTime").empty();
+    $("#triviaDisplay").html("<h2>Your game result</h2>");
+    $("#triviaDisplay").append("<h3>Correct Answers: " + correctCount + "</h3>");
+    $("#triviaDisplay").append("<h3>Incorrect Answers: " + incorrectCount + "</h3>");
+    $("#triviaDisplay").append("<h3>Unanswered: " + timeupCount + "</h3>");
+    $("#triviaDisplay").append("<h4>Click below to play again!</h4>");
 
-
-
-
+    $(".startGame").appendTo("#again"); //move play button to after results display
+    $(".startGame").show();
+}
 
 })
